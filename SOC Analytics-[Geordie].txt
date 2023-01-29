@@ -1,0 +1,781 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "1a3b896f-8335-46ca-bda3-f657f7376e97",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "includeAll": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": "SUB_ID"
+          },
+          {
+            "id": "0f8e65dc-e9c3-4e29-b722-16159ad40fa3",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "query": "where type =~ 'microsoft.operationalinsights/workspaces'\r\n| project id",
+            "typeSettings": {
+              "resourceTypeFilter": {
+                "microsoft.operationalinsights/workspaces": true
+              },
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": "/subscriptions/SUB_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.OperationalInsights/workspaces/WORKSPACE"
+          },
+          {
+            "id": "8387ccb5-4717-43f2-b828-ad3e8ca81a5e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 604800000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": {
+              "durationMs": 604800000,
+              "endTime": "2022-12-21T00:00:00.000Z"
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "parameters - 2"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "SECURITY INCIDENTS",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\n| where TimeGenerated {TimeRange:query}\n| summarize by IncidentNumber, Title\n| summarize count() by IncidentNumber, Title\n| summarize IncidentCount = count() by Title\n| sort by IncidentCount\n| summarize sum(IncidentCount)",
+              "size": 4,
+              "title": "TOTAL INCIDENT COUNT",
+              "noDataMessageStyle": 3,
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "card",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "chartSettings": {
+                "customThresholdLine": "7",
+                "customThresholdLineStyle": 1
+              },
+              "textSettings": {
+                "style": "bignumber"
+              }
+            },
+            "customWidth": "0",
+            "name": "TOTAL INCIDENT COUNT",
+            "styleSettings": {
+              "margin": "0",
+              "padding": "0",
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\n| where TimeGenerated {TimeRange:query}\n| summarize by IncidentNumber, Title\n| summarize count() by IncidentNumber, Title\n| summarize IncidentCount = count() by Title\n| sort by IncidentCount\n| limit 10\n//| summarize sum(IncidentCount)",
+              "size": 0,
+              "title": "TOP 10 OFFENSES – LAST 7 DAYS",
+              "timeContextFromParameter": "TimeRange",
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "chartSettings": {
+                "customThresholdLine": "7",
+                "customThresholdLineStyle": 1
+              }
+            },
+            "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\r\n| summarize by IncidentNumber, Title\r\n| summarize count() by IncidentNumber, Title\r\n| summarize IncidentCount = count() by Title\r\n| sort by IncidentCount",
+              "size": 2,
+              "title": "OFFENSE TRACKER",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Title",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "IncidentCount",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                },
+                "showBorder": true,
+                "size": "full"
+              },
+              "chartSettings": {
+                "xAxis": "Title",
+                "yAxis": [
+                  "IncidentCount"
+                ],
+                "group": null,
+                "createOtherGroup": 0,
+                "showMetrics": false,
+                "customThresholdLine": "7",
+                "customThresholdLineStyle": 0
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "IncidentCount",
+                "sizeAggregation": "Sum",
+                "legendMetric": "IncidentCount",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "IncidentCount",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "name": "OFFENSE TRACKER - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\r\n| summarize by IncidentNumber, Title\r\n| summarize count() by IncidentNumber, Title\r\n| summarize IncidentCount = count() by Title\r\n| sort by IncidentCount",
+              "size": 2,
+              "title": "OFFENSE TRACKER",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Title",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "IncidentCount",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                },
+                "showBorder": true,
+                "sortCriteriaField": "IncidentCount",
+                "sortOrderField": 2,
+                "size": "full"
+              },
+              "chartSettings": {
+                "xAxis": "Title",
+                "yAxis": [
+                  "IncidentCount"
+                ],
+                "customThresholdLine": "7",
+                "customThresholdLineStyle": 1,
+                "ySettings": {
+                  "numberFormatSettings": {
+                    "unit": 0,
+                    "options": {
+                      "style": "decimal",
+                      "useGrouping": true
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "IncidentCount",
+                "sizeAggregation": "Sum",
+                "legendMetric": "IncidentCount",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "IncidentCount",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "name": "OFFENSE TRACKER"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityAlert\r\n| summarize count () by ProductName\r\n| sort by count_",
+              "size": 3,
+              "title": "ALERTS BY PROVIDER",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "ProductName",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "ProductName",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "count_",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              }
+            },
+            "name": "ALERTS BY PROVIDER"
+          }
+        ]
+      },
+      "name": "SECURITY INCIDENTS"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "PROVIDER ALERTS",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityAlert\r\n| where TimeGenerated {TimeRange:query}\r\n| where ProviderName contains \"MDATP\"\r\n| summarize count () by CompromisedEntity, AlertName, AlertSeverity, ProviderName, ProductName\r\n| sort by count_",
+              "size": 2,
+              "title": "MDATP ENDPOINT PROTECTION ALERTS",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "MDATP ENDPOINT PROTECTION ALERTS"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "QualysHostDetection_CL\r\n| mv-expand todynamic(Detections_s)\r\n| extend Status = tostring(Detections_s.Status), Vulnerability = tostring(Detections_s.Results), Severity = tostring(Detections_s.Severity)\r\n| where Status =~ \"New\" and Severity in (\"5\")\r\n| summarize by IPAddress, Id_s, DnsName_s, NetBios_s, OperatingSystem_s, Status, Vulnerability",
+              "size": 0,
+              "title": "QUALYS VULNERABILITY ASSESSMENT – LAST 24 HOURS",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "QUALYS VULNERABILITY ASSESSMENT – LAST 24 HOURS"
+          }
+        ]
+      },
+      "name": "PROVIDER ALERTS"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "LOG SOURCES [ACTIVITY-VOLUME-EPS-HEALTH]",
+        "items": [
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "search *\r\n| extend LOG_SOURCE = Computer, HostName \r\n| where isnotempty(LOG_SOURCE)\r\n| where Computer !contains \"localhost\"\r\n| summarize count() by LOG_SOURCE\r\n| sort by count_\r\n| limit 10",
+                    "size": 0,
+                    "title": "TOP LOG SOURCES ACTIVITY",
+                    "timeContextFromParameter": "TimeRange",
+                    "showExportToExcel": true,
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces"
+                  },
+                  "name": "TOP LOG SOURCES ACTIVITY"
+                }
+              ]
+            },
+            "name": "group - 2"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "title": "LOG VOLUME",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "union withsource=_TableName *\r\n| where TimeGenerated {TimeRange:query}\r\n| summarize Entries = count(), Size = sum(_BilledSize), last_log = datetime_diff(\"second\",now(), max(TimeGenerated)), estimate  = sumif(_BilledSize, _IsBillable==true)  by _TableName, _IsBillable\r\n| project ['Table Name'] = _TableName, ['Table Size'] = Size, ['Table Entries'] = Entries,\r\n          ['Size per Entry'] = 1.0 * Size / Entries, ['IsBillable'] = _IsBillable\r\n| order by ['Table Size']  desc",
+                    "size": 0,
+                    "timeContextFromParameter": "TimeRange",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "Table Size",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "purpleRed",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 2,
+                            "options": {
+                              "style": "decimal"
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Table Entries",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "grayBlue",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 17,
+                            "options": {
+                              "style": "decimal"
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Size per Entry",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "turquoise",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 2,
+                            "options": {
+                              "style": "decimal"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "name": "query - 0"
+                }
+              ]
+            },
+            "name": "LOG VOLUME"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "title": "EVENTS PER SECOND",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "union withsource=_TableName *\r\n| where _TimeReceived  {TimeRange:Label}\r\n| summarize count() , Size = sum(_BilledSize) by bin(_TimeReceived, 1m), Type, _IsBillable\r\n| extend counttemp =count_ / 60\r\n| summarize \r\n           ['Average Events per Second (EPS)'] = avg(counttemp), ['Lowest EPS']=min (counttemp),\r\n           ['Highest EPS']=max(counttemp)\r\n  by ['Table Name']=Type\r\n| order  by ['Average Events per Second (EPS)'] desc",
+                    "size": 0,
+                    "timeContextFromParameter": "TimeRange",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "visualization": "table",
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "Average Events per Second (EPS)",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "greenBlue",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 0,
+                            "options": {
+                              "style": "decimal",
+                              "maximumSignificantDigits": 3
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Lowest EPS",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "greenBlue",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 0,
+                            "options": {
+                              "style": "decimal",
+                              "maximumSignificantDigits": 3
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Highest EPS",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "greenBlue",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 0,
+                            "options": {
+                              "style": "decimal",
+                              "maximumSignificantDigits": 3
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Average Events per Second (eps)",
+                          "formatter": 3,
+                          "formatOptions": {
+                            "palette": "greenBlue",
+                            "customColumnWidthSetting": "25%"
+                          },
+                          "numberFormat": {
+                            "unit": 0,
+                            "options": {
+                              "style": "decimal",
+                              "maximumSignificantDigits": 3
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "name": "query - 0"
+                }
+              ]
+            },
+            "name": "EVENTS PER SECOND"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "title": "HEALTH STATUS",
+              "items": [
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "tabs",
+                    "links": [
+                      {
+                        "id": "5dac2506-a64d-4d33-b2e7-67e19a11f7e3",
+                        "cellValue": "OnPrem",
+                        "linkTarget": "parameter",
+                        "linkLabel": "All Machines",
+                        "subTarget": "Yes",
+                        "style": "link"
+                      }
+                    ]
+                  },
+                  "name": "links - 3"
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "parameters": [
+                      {
+                        "id": "e5e11f27-e889-4382-880c-1e5a75c7b334",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "TableName",
+                        "type": 2,
+                        "isRequired": true,
+                        "multiSelect": true,
+                        "quote": "'",
+                        "delimiter": ",",
+                        "query": "union withsource= _TableName *\r\n| where Computer != \"\"\r\n| summarize by [\"Table name\"] = _TableName",
+                        "typeSettings": {
+                          "additionalResourceOptions": [
+                            "value::all"
+                          ]
+                        },
+                        "timeContext": {
+                          "durationMs": 0
+                        },
+                        "timeContextFromParameter": "TimeRange",
+                        "queryType": 0,
+                        "resourceType": "microsoft.operationalinsights/workspaces",
+                        "value": [
+                          "Heartbeat"
+                        ]
+                      },
+                      {
+                        "id": "6b109a54-3e88-40f3-bf08-93ae08328b68",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "VMfilter",
+                        "type": 2,
+                        "isRequired": true,
+                        "multiSelect": true,
+                        "quote": "'",
+                        "delimiter": ",",
+                        "query": "union withsource= _TableName *\r\n| where _TableName in ({TableName})\r\n| where Computer != \"\"\r\n| summarize by value = Computer\r\n| extend label = value",
+                        "crossComponentResources": [
+                          "{Workspace}"
+                        ],
+                        "typeSettings": {
+                          "additionalResourceOptions": [
+                            "value::all"
+                          ],
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 0
+                        },
+                        "timeContextFromParameter": "TimeRange",
+                        "queryType": 0,
+                        "resourceType": "microsoft.operationalinsights/workspaces",
+                        "value": [
+                          "value::all"
+                        ]
+                      },
+                      {
+                        "id": "beb6db72-d647-49ab-a574-9785e368f2c3",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "UnhealthyCriteria",
+                        "type": 2,
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "jsonData": "[\r\n    { \"value\":\"1m\", \"label\":\"1 minute without heartbeat\", \"selected\":false },\r\n    { \"value\":\"5m\", \"label\":\"5 minutes without heartbeat\", \"selected\":false },\r\n    { \"value\":\"30m\", \"label\":\"30 minutes without heartbeat\", \"selected\":false },\r\n    { \"value\":\"1h\", \"label\":\"1 hour without heartbeat\", \"selected\":true },\r\n    { \"value\":\"2h\", \"label\":\"2 hours without heartbeat\", \"selected\":false },\r\n    { \"value\":\"8h\", \"label\":\"8 hours without heartbeat\", \"selected\":false },\r\n    { \"value\":\"1d\", \"label\":\"1 day without heartbeat\", \"selected\":false },\r\n    { \"value\":\"2d\", \"label\":\"2 days without heartbeat\", \"selected\":false },\r\n    { \"value\":\"7d\", \"label\":\"7 days without heartbeat\", \"selected\":false }\r\n]",
+                        "value": "2d"
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces"
+                  },
+                  "name": "parameters - 4"
+                },
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "Heartbeat\r\n| where Computer in ({VMfilter})\r\n| where TimeGenerated {TimeRange:query}\r\n| summarize LastHeartbeat = max(TimeGenerated) by Computer\r\n| extend State = iff(LastHeartbeat < ago({UnhealthyCriteria}), 'Unhealthy', 'Healthy')\r\n| extend TimeFromNow = now() - LastHeartbeat\r\n| extend [\"TimeAgo\"] = strcat(case(TimeFromNow < 2m, strcat(toint(TimeFromNow / 1m), ' seconds'), TimeFromNow < 2h, strcat(toint(TimeFromNow / 1m), ' minutes'), TimeFromNow < 2d, strcat(toint(TimeFromNow / 1h), ' hours'), strcat(toint(TimeFromNow / 1d), ' days')), ' ago')\r\n| join (\r\nHeartbeat\r\n| where TimeGenerated {TimeRange:query}\r\n| extend Packed = pack_all()\r\n) on Computer\r\n| where TimeGenerated == LastHeartbeat\r\n| join (\r\nHeartbeat\r\n| where TimeGenerated {TimeRange:query}\r\n| make-series InternalTrend=iff(count() > 0, 1, 0) default = 0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {UnhealthyCriteria} by Computer\r\n| extend Trend=array_slice(InternalTrend, array_length(InternalTrend) - 30, array_length(InternalTrend)-1)\r\n| extend (s_min, s_minId, s_max, s_maxId, s_avg, s_var, s_stdev) = series_stats(Trend)\r\n| project Computer, Trend, s_avg\r\n) on Computer\r\n| order by State, s_avg asc, TimeAgo\r\n| project [\"_ComputerName_\"] = Computer, [\"Computer\"]=strcat('🖥️ ', Computer), State, [\"Environment\"] = iff(ComputerEnvironment == \"Azure\", ComputerEnvironment, Category), [\"OS\"]=iff(isempty(OSName), OSType, OSName), [\"Azure Resource\"]=ResourceId, [\"Time\"]=strcat('🕒 ', TimeAgo), [\"Heartbeat Trend\"]=Trend, [\"Details\"]=Packed, [\"Computer Region\"] = RemoteIPCountry",
+                    "size": 2,
+                    "timeContextFromParameter": "TimeRange",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "crossComponentResources": [
+                      "{Workspace}"
+                    ],
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "_ComputerName_",
+                          "formatter": 5
+                        },
+                        {
+                          "columnMatch": "State",
+                          "formatter": 18,
+                          "formatOptions": {
+                            "thresholdsOptions": "icons",
+                            "thresholdsGrid": [
+                              {
+                                "operator": "==",
+                                "thresholdValue": "Healthy",
+                                "representation": "success",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "==",
+                                "thresholdValue": "Unhealthy",
+                                "representation": "2",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "Default",
+                                "thresholdValue": null,
+                                "representation": "Blank",
+                                "text": "{0}{1}"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "columnMatch": "Environment",
+                          "formatter": 18,
+                          "formatOptions": {
+                            "thresholdsOptions": "colors",
+                            "thresholdsGrid": [
+                              {
+                                "operator": "==",
+                                "thresholdValue": "Azure",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "==",
+                                "thresholdValue": " Direct Agent",
+                                "representation": "magenta",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "==",
+                                "thresholdValue": "SCOM Agent",
+                                "representation": "purple",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "==",
+                                "thresholdValue": "SCOM Management Server",
+                                "representation": "gray",
+                                "text": "{0}{1}"
+                              },
+                              {
+                                "operator": "Default",
+                                "thresholdValue": null,
+                                "representation": "blue",
+                                "text": "{0}{1}"
+                              }
+                            ]
+                          },
+                          "numberFormat": {
+                            "unit": 0,
+                            "options": {
+                              "style": "decimal"
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "Heartbeat Trend",
+                          "formatter": 10,
+                          "formatOptions": {
+                            "palette": "redGreen"
+                          }
+                        },
+                        {
+                          "columnMatch": "Details",
+                          "formatter": 5
+                        }
+                      ],
+                      "labelSettings": [
+                        {
+                          "columnId": "State",
+                          "label": "Health Status"
+                        },
+                        {
+                          "columnId": "Heartbeat Trend",
+                          "label": "Heartbeat History"
+                        }
+                      ]
+                    }
+                  },
+                  "name": "query - 4"
+                }
+              ]
+            },
+            "name": "HEALTH STATUS"
+          }
+        ]
+      },
+      "name": "LOG SOURCES [ACTIVITY-VOLUME-EPS-HEALTH]"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/SUB_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.OperationalInsights/workspaces/WORKSPACE"
+  ],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
